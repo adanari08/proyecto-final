@@ -32,4 +32,66 @@ De esa forma podemos guardar nuestros datos que se enviaran desde el JFrame.
 |--------|--------------------------|-------------------------|-------------|
 
 #### Bloque de Codigo 
+```swift
+try{
+                PreparedStatement ps = (PreparedStatement) cn.prepareStatement("SELECT Cargo FROM usuarios WHERE Usuario='"+usuario+"' AND Contraseña='"+contraseña+"'");
+                ResultSet rs = ps.executeQuery();
+                
+                if(rs.next()){
+                    String tiponivel = rs.getString("Cargo");
+                    
+                    if(tiponivel.equalsIgnoreCase("Oficial de Procesamiento de Datos de Criminales")){
+                        dispose();
+                        Registro_Criminal delincuentes = new Registro_Criminal();
+                        delincuentes.setVisible(true);
+                        
+                    }else if(tiponivel.equalsIgnoreCase("Especialista en Selección de Personal")){
+                        dispose();
+                        Registro_Personal trabajadores = new Registro_Personal();
+                        trabajadores.setVisible(true);
+                        
+                    }else if(tiponivel.equalsIgnoreCase("Oficial de Inteligencia Criminal")){
+                        dispose();
+                        Aministración_Datos buscadores = new Aministración_Datos();
+                        buscadores.setVisible(true);
+                    }
+                    
+                }else{
+                    JOptionPane.showMessageDialog(null,"USUARIO Y/O CONTRASEÑA INCORRECTOS");
+                    txtUsuario.setText("");
+                    txtContraseña.setText("");
+                }
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null,"ERROR AL INICIAR SESIÓN"+e);
+            }
+        }else{
+            JOptionPane.showMessageDialog(null,"DEBES COMPLETAR LOS CAMPOS");
+        }
+    }                                                
+```
+
+## Conexion JFrame Iniciar Sesion con la Base de Datos 
+
+crearemos una clase java donde tendremos lo siguiente
+```swift
+public class conexionmysql {
+    Connection cn;
+    
+    public Connection conectar(){
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            cn=(Connection) DriverManager.getConnection("jdbc:mysql://localhost/datosusuario","root","");
+            System.out.println("CONECTADO");
+        }catch(Exception e){
+            System.out.println("ERROR DE CONEXIÓN BD"+e);
+        }
+        return cn;
+    }
+}
+```
+### Metodo 
+| Nombre | Que dato retorna | Que dato recibe | Descripcion | 
+|--------|------------------|-----------------|-------------|
+| conectar() | objeto Conexcion | | Establece una Conexion de la Base de Datos |
+
 
