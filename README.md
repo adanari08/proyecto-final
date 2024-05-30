@@ -610,6 +610,9 @@ JFileChooser chooser = new JFileChooser();
 ```
 Se realizo una redaccion de una forma sencilla y entendible para el manejo de los datos. 
 Reclusorio fue hecho para poder tener un control con los datos dentro de el. Hay que tener almacenados los datos que se podran requerir en algun futuro, entonces fue importante saber como hacer la conexion con la base de datos. Este proyecto fue hecho con la finalidad de saber mejor el manejo de la interfaz entre otros temas que se fue aprendiendo en el camino.
+
 Hecho por:
+
 Torres Cortes Alexander Jassiel
+
 Cruz Alonso Kelly Adanari 
