@@ -95,8 +95,150 @@ public class conexionmysql {
 | conectar() | objeto Conexcion | | Establece una Conexion de la Base de Datos |
 
 
-# Registro Criminal
+## Registro Criminal
 
 En esta ventana tendremos las opciones de ingresar datos que nos soliciten, sera para registrar a un delincuente que sera guardado en la base de datos. 
+
+| Nombre | Descripcion |
+|--------|-------------|
+| createEmail() | prepara la información necesaria para enviar un correo electrónico, incluyendo el asunto, contenido, y configuración SMTP |
+| sendEmail() | envía un correo electrónico utilizando SMTP | 
+| limpiar() | encarga de limpiar o restablecer los valores de varios componentes |
+|emailTo = emailFrom.trim(); | se refiere a copiar la dirección de correo electrónico almacenada, eliminando cualquier espacio en blanco al principio y al final de la dirección de correo electrónico en el proceso| 
+|mProperties.put("mail.smtp.host", "smtp.gmail.com");|establece el servidor SMTP que se utilizará para enviar correos electrónicos|
+|mProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");| se establece la confianza en el servidor SMTP de Gmail|
+|mProperties.put("mail.smtp.starttls.enable", "true");|se utiliza para mejorar la seguridad de la conexión SMTP al cifrar la comunicación entre el cliente y el servidor|
+|mProperties.put("mail.smtp.port", "587");|se configura el puerto 587, que es el puerto estándar utilizado para conexiones SMTP con STARTTLS habilitado|
+|mProperties.put("mail.smtp.user", emailFrom);|establece el nombre de usuario que se utilizará para autenticarse en el servidor SMTP|
+|mProperties.put("mail.smtp.ssl.protocols", "TLS1.2");|especifica los protocolos SSL que se permitirán para la conexión|
+|mProperties.put("mail.smtp.auth", "true");| habilita la autenticación en el servidor SMTP| 
+
+```swift
+private void createEmail(){
+        emailTo = emailFrom.trim();
+        String mensaje = "ADVERTENCIA!! Ha sido ingresado un nuevo delincuente";
+        subject = mensaje.trim();
+        content ="Estimado Jefe,\n" +
+"\n" +
+"Quisiera informarle que hemos recibido un nuevo recluso en nuestras instalaciones. Si desea más detalles puede consultar los registros.\n" +
+"\n" +
+"Atentamente trabajador anónimo" +
+"Oficial de Procesamiento de Datos de Criminales".trim();
+        
+        mProperties.put("mail.smtp.host", "smtp.gmail.com");
+        mProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+        mProperties.put("mail.smtp.starttls.enable", "true");
+        mProperties.put("mail.smtp.port", "587");
+        mProperties.put("mail.smtp.user", emailFrom);
+        mProperties.put("mail.smtp.ssl.protocols", "TLS1.2");
+        mProperties.put("mail.smtp.auth", "true");
+        
+        mSession = Session.getDefaultInstance(mProperties);
+        
+        
+        try {
+            mCorreo = new MimeMessage(mSession);
+            mCorreo.setFrom(new InternetAddress(emailFrom));
+            mCorreo.setRecipient(Message.RecipientType.TO, new InternetAddress(emailTo));
+            mCorreo.setSubject(subject);
+            mCorreo.setText(content, "ISO-8859-1", "html");
+            
+        } catch (AddressException ex) {
+            Logger.getLogger(Registro_Criminal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MessagingException ex) {
+            Logger.getLogger(Registro_Criminal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    private void sendEmail(){
+        try {
+            Transport mTransport = mSession.getTransport("smtp");
+            mTransport.connect(emailFrom, passwordFrom);
+            mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
+            mTransport.close();
+            JOptionPane.showMessageDialog(null, "CORREO ENVIADO");
+        } catch (NoSuchProviderException ex) {
+            Logger.getLogger(Registro_Criminal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MessagingException ex) {
+            Logger.getLogger(Registro_Criminal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    void limpiar(){
+        txtNuc.setText("");
+        txtNombre.setText("");
+        txtApellido.setText("");
+        txtEdad.setText("");
+        txtDelito.setText("");
+        txtNacimiento.setText("");
+        cboTipoSangre.setSelectedItem("Seleccionar");
+        lbl1.setIcon(null);
+        txtRuta1.setText("");
+        lbl2.setIcon(null);
+        txtRuta2.setText("");
+        lbl3.setIcon(null);
+        txtRuta3.setText("");
+        lbl4.setIcon(null);
+        txtRuta4.setText("");
+        lbl5.setIcon(null);
+        txtRuta5.setText("");
+        lbl6.setIcon(null);
+        txtRuta6.setText("");
+        lbl7.setIcon(null);
+        txtRuta7.setText("");
+        lbl8.setIcon(null);
+        txtRuta8.setText("");
+    }
+```
+
+Ingreso de datos donde se ira almacenando en la variable correspondiente y comparar que ningun campo de encuentre vacio. nos prepara la consulta para almacenarla. 
+
+```swift
+String nuc = txtNuc.getText();
+        String nacimiento = txtNacimiento.getText();
+        String nombre = txtNombre.getText();
+        String apellido = txtApellido.getText();
+        String edad = txtEdad.getText();
+        String delito = txtDelito.getText();
+        String tiposangre = (String) cboTipoSangre.getSelectedItem();
+
+        if(nuc.isEmpty()||nacimiento.isEmpty()||nombre.isEmpty()||apellido.isEmpty()||edad.isEmpty()||tiposangre.isEmpty()){
+            JOptionPane.showMessageDialog(null,"DEBES RELLENAR TODOS LOS CAMPOS");
+        }else{
+            try{
+                String consulta = "INSERT INTO presos (rnd,nombre,apellido,edad,delito,lugarNacimiento,tipoSangre,ruta1,ruta2,ruta3,ruta4,ruta5,ruta6,ruta7,ruta8)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                PreparedStatement ps = (PreparedStatement) cn.prepareStatement(consulta);
+
+                ps.setString(1, txtNuc.getText());
+                ps.setString(2, txtNombre.getText());
+                ps.setString(3, txtApellido.getText());
+                ps.setString(4, txtEdad.getText());
+                ps.setString(5, txtDelito.getText());
+                ps.setString(6, txtNacimiento.getText());
+                ps.setString(7, tiposangre);
+                ps.setString(8, txtRuta1.getText());
+                ps.setString(9, txtRuta2.getText());
+                ps.setString(10, txtRuta3.getText());
+                ps.setString(11, txtRuta4.getText());
+                ps.setString(12, txtRuta5.getText());
+                ps.setString(13, txtRuta6.getText());
+                ps.setString(14, txtRuta7.getText());
+                ps.setString(15, txtRuta8.getText());
+
+                int i = ps.executeUpdate();
+                if(i>0){
+                    JOptionPane.showMessageDialog(null,"EL DELINCUENTE HA SIDO INGRESADO CORRECTAMENTE");
+                    limpiar();
+                }
+
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null,"NO SE PUDO INGRESAR EL DELINCUENTE"+e);
+            }
+        }
+    }                                           
+
+```
 
 
