@@ -95,3 +95,8 @@ public class conexionmysql {
 | conectar() | objeto Conexcion | | Establece una Conexion de la Base de Datos |
 
 
+# Registro Criminal
+
+En esta ventana tendremos las opciones de ingresar datos que nos soliciten, sera para registrar a un delincuente que sera guardado en la base de datos. 
+
+
