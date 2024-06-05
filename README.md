@@ -116,57 +116,191 @@ En esta ventana tendremos las opciones de ingresar datos que nos soliciten, sera
 |mCorreo.setSubject(subject);| Se establece el asunto del correo electrónico utilizando el valor de la variable subject|
 |mCorreo.setText(content, "ISO-8859-1", "html");| Se establece el contenido del correo electrónico|
 
+
+Creamos la instancia con conexionmysql2 (la base de datos), tenemos nuestras variables de cadena que nos almacenaran tanto un correo electronico, una contrasena y el destino del correo. Este tiene la funcion de enviar un correo con la informacion solicitada con la cuenta de procesamientodatoscriminales@gmail.com. 
+
 ```swift
-private void createEmail(){
-        emailTo = emailFrom.trim();
-        String mensaje = "ADVERTENCIA!! Ha sido ingresado un nuevo delincuente";
-        subject = mensaje.trim();
-        content ="Estimado Jefe,\n" +
-"\n" +
-"Quisiera informarle que hemos recibido un nuevo recluso en nuestras instalaciones. Si desea más detalles puede consultar los registros.\n" +
-"\n" +
-"Atentamente trabajador anónimo" +
-"Oficial de Procesamiento de Datos de Criminales".trim();
-        
-        mProperties.put("mail.smtp.host", "smtp.gmail.com");
-        mProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
-        mProperties.put("mail.smtp.starttls.enable", "true");
-        mProperties.put("mail.smtp.port", "587");
-        mProperties.put("mail.smtp.user", emailFrom);
-        mProperties.put("mail.smtp.ssl.protocols", "TLS1.2");
-        mProperties.put("mail.smtp.auth", "true");
-        
-        mSession = Session.getDefaultInstance(mProperties);
-        
-        
-        try {
-            mCorreo = new MimeMessage(mSession);
-            mCorreo.setFrom(new InternetAddress(emailFrom));
-            mCorreo.setRecipient(Message.RecipientType.TO, new InternetAddress(emailTo));
-            mCorreo.setSubject(subject);
-            mCorreo.setText(content, "ISO-8859-1", "html");
-            
-        } catch (AddressException ex) {
-            Logger.getLogger(Registro_Criminal.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MessagingException ex) {
-            Logger.getLogger(Registro_Criminal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-    }
+public class Registro_Criminal extends javax.swing.JDialog {
+    conexion.conexionmysql2 con = new conexionmysql2();
+    Connection cn = con.conectar();
     
-    private void sendEmail(){
-        try {
-            Transport mTransport = mSession.getTransport("smtp");
-            mTransport.connect(emailFrom, passwordFrom);
-            mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
-            mTransport.close();
-            JOptionPane.showMessageDialog(null, "CORREO ENVIADO");
-        } catch (NoSuchProviderException ex) {
-            Logger.getLogger(Registro_Criminal.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MessagingException ex) {
-            Logger.getLogger(Registro_Criminal.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    String correo = "procesamientodatoscriminales@gmail.com";
+    String contra = "oczjlmjzjddrkuhz";
+    String correoDestino = "alexin262006@gmail.com";
+ ```
+En este metodo nos cera un arhcivo adjunto con un texto escrito dentro de el,la envia utilizando javax.mail. Sera enviada con la cuenta que ya fue configurada. 
+
+```swift
+private void createEmail() throws MessagingException{
+            Properties p = new Properties();
+            p.put("mail.smtp.host", "smtp.gmail.com");
+            p.setProperty("mail.smtp.ssl.trust", "smtp.gmail.com");
+            p.put("mail.smtp.starttls.enable", "true");
+            p.setProperty("mail.smtp.port", "587");
+            p.setProperty("mail.smtp.user", correo);
+            p.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            p.setProperty("mail.smtp.auth", "true");
+            
+            Session s = Session.getDefaultInstance(p);
+            BodyPart texto = new MimeBodyPart();
+            texto.setText("Espero se encuentre bien, enviamos este correo desde la oficina de procesamiento de datos criminales"
+                        + " con la finalidad de que usted lleve a cabo la revisión de los datos del delincuente, cualquier duda"
+                        + " no dude en responder este mensaje y nosotros la aclararemos a la brevedad.\n"
+                        + "Sin nada más por el momento le mando un cordial saludo.");
+            BodyPart adjunto = new MimeBodyPart();
+            adjunto.setDataHandler(new DataHandler(new FileDataSource("C:\\Users\\alexa\\OneDrive\\Escritorio\\REPORTES RECLUSORIO\\ingreso.pdf")));
+            adjunto.setFileName("ingreso.pdf");
+            MimeMultipart m = new MimeMultipart();
+            m.addBodyPart(texto);
+            m.addBodyPart(adjunto);
+            
+            
+            
+            MimeMessage mensaje = new MimeMessage(s);
+            
+            mensaje.setFrom(new InternetAddress(correo));
+            mensaje.addRecipient(Message.RecipientType.TO, new InternetAddress(correoDestino));
+            mensaje.setSubject("INGRESO DE REO A PRISIÓN");
+            mensaje.setContent(m);
+            
+            Transport t = s.getTransport("smtp");
+            t.connect(correo, contra);
+            t.sendMessage(mensaje, mensaje.getAllRecipients());
+            t.close();
+            JOptionPane.showMessageDialog(null, "Mensaje enviado");
     }
+```
+NUevoIngreso(): fue creado para crear un nuevo documento PDF, donde abre un archvo de salida en la ruta especificada y lo guarda.
+
+```swift
+ private void nuevoIngreso(){
+        Document documento = new Document();
+
+    try {
+        PdfWriter.getInstance(documento, new FileOutputStream("C:\\Users\\alexa\\OneDrive\\Escritorio\\REPORTES RECLUSORIO\\ingreso.pdf"));
+        
+        documento.open();
+```
+
+En este try es para agregar y acomoda el logo dentro del pdf. 
+
+```swift
+try {
+            com.itextpdf.text.Image logoIzquierdo = com.itextpdf.text.Image.getInstance("src/imagenes/gobierno.jpg");
+            logoIzquierdo.scaleToFit(300, 120);
+            logoIzquierdo.setAbsolutePosition(50, 750);
+            documento.add(logoIzquierdo);
+            
+            com.itextpdf.text.Image logoDerecho = com.itextpdf.text.Image.getInstance("src/imagenes/prision.png");
+            logoDerecho.scaleToFit(90, 80);
+            logoDerecho.setAbsolutePosition(450, 750);
+            documento.add(logoDerecho);
+        } catch (Exception e) {
+            System.out.println("ERROR AL CARGAR LOS LOGOS: " + e);
+        }
+        ```
+
+Nos agrega el titulo del documento PDF y nos lo centra en la pagina sus espacios. y de igual manera nos agrega un mensaje espesifico al PDF. Donde informamos sobre el ingreso de un criminal al reclusorio. 
+
+```swift
+ Paragraph title = new Paragraph("\n\nNuevo Delincuente Ingresado al Penal\n\n", 
+                FontFactory.getFont("Tahoma", 22, Font.BOLD, BaseColor.DARK_GRAY));
+        title.setAlignment(Element.ALIGN_CENTER);
+        documento.add(title);
+
+Paragraph mensaje2 = new Paragraph(
+            "Se informa que ha habido un nuevo ingreso de un reo al penal. " +
+            "El sistema penitenciario se encarga de la seguridad y custodia de los internos, " +
+            "proporcionando un ambiente seguro tanto para los reclusos como para el personal. " +
+            "Este reporte contiene los datos personales y las imágenes del nuevo recluso, " +
+            "así como la información relevante para su seguimiento y control. " +
+            "El objetivo es asegurar la correcta identificación y registro de cada interno, " +
+            "manteniendo un control riguroso y preciso dentro del penal. " +
+            "Es importante que todos los datos sean revisados y actualizados conforme a los protocolos establecidos.\n\n" +
+            "Para más información, consulte las siguientes páginas del documento donde se detallan " +
+            "los datos del nuevo recluso y se proporcionan imágenes para su correcta identificación.\n" +
+            "Agradecemos su atención y colaboración en este proceso."
+          + "\n\n\n\n\n\n\n\n\n\n\n\n Atentamente\n Oficial de Procesamiento de Datos de Criminales."
+            , FontFactory.getFont("Tahoma", 14, Font.NORMAL, BaseColor.BLACK));
+        mensaje2.setAlignment(Element.ALIGN_JUSTIFIED);
+        documento.add(mensaje2);
+```
+
+Nos va a crear una tabla con los datos del criminal dentro del PDF. 
+
+```swift
+PdfPTable tablaDatos = new PdfPTable(2);
+        tablaDatos.setWidthPercentage(100);//ancho a ocupar en la tabla
+        tablaDatos.setSpacingBefore(20f);//espacio antes de la tabla
+        tablaDatos.setSpacingAfter(20f);//espacio despues de la tabla
+
+        // Definir fuentes para encabezados y datos
+        Font fontHeader = FontFactory.getFont("Arial", 14, Font.BOLD, BaseColor.WHITE);
+        Font fontData = FontFactory.getFont("Arial", 14, Font.NORMAL, BaseColor.BLACK);
+        
+        // Encabezados de los datos
+        String[] headers = {"NUC", "Nombre(s)", "Apellidos", "Edad", "Delito", "Lugar de Nacimiento", "Tipo de Sangre"};
+        String[] data = {
+            txtNuc.getText(),
+            txtNombre.getText(),
+            txtApellido.getText(),
+            txtEdad.getText(),
+            txtDelito.getText(),
+            txtNacimiento.getText(),
+            cboTipoSangre.getSelectedItem().toString()
+        };
+        ```
+
+Tennemos un arreglo que se ira recorriendo para crear datos y agregar celdas a la tabla. 
+```swift
+        for (int i = 0; i < headers.length; i++) {
+            PdfPCell headerCell = new PdfPCell(new Phrase(headers[i], fontHeader));
+            headerCell.setBackgroundColor(BaseColor.ORANGE);
+            headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            headerCell.setPadding(10f);
+            tablaDatos.addCell(headerCell);
+
+            PdfPCell dataCell = new PdfPCell(new Phrase(data[i], fontData));
+            dataCell.setPadding(10f);
+            tablaDatos.addCell(dataCell);
+        }
+        
+        documento.add(tablaDatos);
+```
+
+Tedremos nuestra tabla de Imgenes, diciendole que tamano se requiere y en donde sera implementado.
+```swift
+ PdfPTable tablaImagenes = new PdfPTable(4);
+        tablaImagenes.setWidthPercentage(100);
+        tablaImagenes.setSpacingBefore(10f);
+        tablaImagenes.setSpacingAfter(10f);
+
+        try {
+            ImageIcon[] imageIcons = new ImageIcon[] {
+                (ImageIcon) lbl1.getIcon(),
+                (ImageIcon) lbl2.getIcon(),
+                (ImageIcon) lbl3.getIcon(),
+                (ImageIcon) lbl4.getIcon(),
+                (ImageIcon) lbl5.getIcon(),
+                (ImageIcon) lbl6.getIcon(),
+                (ImageIcon) lbl7.getIcon(),
+                (ImageIcon) lbl8.getIcon()
+            };
+
+            for (ImageIcon icon : imageIcons) {
+                com.itextpdf.text.Image img = com.itextpdf.text.Image.getInstance(((ImageIcon) icon).getImage(), null);
+                img.scaleToFit(120, 120);
+                PdfPCell cell = new PdfPCell(img, true);
+                cell.setPadding(10f); // Añadir espacio dentro de la celda
+                cell.setBorderWidth(1); // Añadir borde a la celda
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                tablaImagenes.addCell(cell);
+            }
+
+            // Añadir tabla de imágenes al documento
+            documento.add(tablaImagenes);
+```
     
     
     void limpiar(){
@@ -301,7 +435,7 @@ String usuario = txtUsuario.getText();
                     ps.setString(5, cargo);
                     ps.setString(6, contraseña);
                     ps.setString(7, lbl1.getText());
-
+                    ps.setString(8, sexo);
                     int i = ps.executeUpdate();
                     if(i>0){
                         JOptionPane.showMessageDialog(null,"EL TRABAJADOR HA SIDO REGISTRADO CORRECTAMENTE");
@@ -430,189 +564,134 @@ import javax.swing.JOptionPane;
 
 Se establece una conexión con la base de datos y se ejecuta una consulta para obtener todos los registros de la tabla presos. Luego, se recorren los resultados y se añaden a la tabla en el documento. 
 
+Crea un documento PDF y se agregara un contenido:
+
 ```swift
 Document documento = new Document();
+
+    try {
+        PdfWriter.getInstance(documento, new FileOutputStream("C:\\Users\\alexa\\OneDrive\\Escritorio\\REPORTES RECLUSORIO\\reporte.pdf"));
         
-        try{
-            PdfWriter.getInstance(documento, new FileOutputStream("C:\\Users\\alexa\\OneDrive\\Documentos\\NetBeansProjects\\PROYECTO RECLUSORIO\\RECLUSORIO2\\PDF's REPORTES\\Reporte_Delincuentes.pdf"));
-            
-            Image header = Image.getInstance("src/imagenes/header.png");
+        documento.open();
+```
+
+Carga la imagen para poder agregarla al documento PDF como encabezado.
+        
+      ```swift
+        try {
+            com.itextpdf.text.Image header = com.itextpdf.text.Image.getInstance("src/imagenes/header.png");
             header.scaleToFit(650, 1000);
             header.setAlignment(Chunk.ALIGN_CENTER);
-            
-            Paragraph parrafo = new Paragraph();
-            parrafo.setAlignment(Paragraph.ALIGN_CENTER);
-            parrafo.add("REPORTE DE DELINCUENTES ACTUALIZADO \n\n");
-            parrafo.setFont(FontFactory.getFont("Tahoma", 18, Font.BOLD, BaseColor.DARK_GRAY));
-            parrafo.add("Delincuentes Registrados \n\n");
-            
-                    
-            documento.open();
-            
             documento.add(header);
-            documento.add(parrafo);
-            
-            PdfPTable tabla = new PdfPTable(7);
-            tabla.addCell("NUC");
-            tabla.addCell("Nombre(s)");
-            tabla.addCell("Apellidos");
-            tabla.addCell("Edad");
-            tabla.addCell("Delito");
-            tabla.addCell("Lugar de nacimiento");
-            tabla.addCell("Tipo de sangre");
-            
-            try{
-                Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/datosdelincuentes","root","");
-                PreparedStatement pst = (PreparedStatement) cn.prepareStatement("select * from presos");
-                
-                ResultSet rs = pst.executeQuery();
-                
-                if(rs.next()){
-                    
-                    do{
-                        tabla.addCell(rs.getString(1));
-                        tabla.addCell(rs.getString(2));
-                        tabla.addCell(rs.getString(3));
-                        tabla.addCell(rs.getString(4));
-                        tabla.addCell(rs.getString(5));
-                        tabla.addCell(rs.getString(6));
-                        tabla.addCell(rs.getString(7));
-
-                    }while(rs.next());
-                    documento.add(tabla);
-                }
-            }catch(DocumentException | SQLException e){
-            }
-            documento.close();
-            String mensaje = "REPORTE CREADO EXITOSAMENTE EN \n\nC:\\Users\\alexa\\OneDrive\\Documentos\\NetBeansProjects\\PROYECTO RECLUSORIO\\RECLUSORIO2\\PDF's REPORTES";
-            JOptionPane.showMessageDialog(null, mensaje);
-        }catch (Exception e){
-            System.out.println("ERROR EN PDF "+e);
+        } catch (Exception e) {
+            System.out.println("ERROR AL CARGAR LA IMAGEN DEL HEADER: " + e);
         }
-    }           
-```
-Este fragmento de código se encarga de extraer datos de un ResultSet de una base de datos y añadirlos a una tabla en un documento PDF.
+        ```
 
-## Envio de Correo Electronico 
-
-|Nombre | Descripcion|
-|-------|------------|
-|createEmail() |configura las propiedades del correo y prepara el mensaje con el contenido y los adjuntos |
-|Session.getDefaultInstance(mProperties)| Crea una sesión con las propiedades configuradas |
-|sendEmail() | maneja la conexión al servidor SMTP y envía el mensaje |
-
-
-Configuración de las propiedades del correo: Define las propiedades necesarias para conectarse al servidor SMTP de Gmail.
-
-- mail.smtp.host: Servidor SMTP de Gmail.
-- mail.smtp.ssl.trust: Permite confiar en el servidor SMTP especificado.
-- mail.smtp.starttls.enable: Habilita STARTTLS para la conexión segura.
-- mail.smtp.port: Puerto SMTP.
-- mail.smtp.user: Usuario del correo.
-- mail.smtp.ssl.protocols: Protocolos SSL a usar.
-- mail.smtp.auth: Habilita la autenticación SMTP.
-
+Nos carga la imagen que seria el logo del Reclusorio y la agregara al documento PDF. con la yuada de un try para capturar alguna excepcion. 
+        
+        ```swift
+        try {
+            com.itextpdf.text.Image logo = com.itextpdf.text.Image.getInstance("src/imagenes/prision.png");
+            logo.scaleToFit(100, 100);
+            logo.setAlignment(Chunk.ALIGN_CENTER);
+            documento.add(logo);
+        } catch (Exception e) {
+            System.out.println("ERROR AL CARGAR LA IMAGEN DEL LOGO: " + e);
+        }
+        ```
+    Nos crea 2 parrafos para agregarlo al PDF. El cual tendra un titulo "REPORTE DE DELINCUENTES ACTUALIZADO", con el tipo de letra "TAHOMA" con una fuente de 22 y color gris oscuro. Y el subtitutlo como "DELINCUENTES REGISTRADOS".
 
 ```swift
-public Envio_Correo(javax.swing.JDialog parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-        this.setLocationRelativeTo(null);
-        mProperties = new Properties();
-        nombres_archivos = "";
-    }
-
-    
-        private void createEmail(){
-        emailTo = txtReceptor.getText().trim();
-        subject = txtAsunto.getText().trim();
-        content =txtContenido.getText().trim();
+        Paragraph title = new Paragraph("REPORTE DE DELINCUENTES ACTUALIZADO\n\n", 
+                FontFactory.getFont("Tahoma", 22, Font.BOLD, BaseColor.DARK_GRAY));
+        title.setAlignment(Element.ALIGN_CENTER);
+        documento.add(title);
         
-        mProperties.put("mail.smtp.host", "smtp.gmail.com");
-        mProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
-        mProperties.put("mail.smtp.starttls.enable", "true");
-        mProperties.put("mail.smtp.port", "587");
-        mProperties.put("mail.smtp.user", emailFrom);
-        mProperties.put("mail.smtp.ssl.protocols", "TLSv1.2");
-        mProperties.put("mail.smtp.auth", "true");
+        Paragraph subtitle = new Paragraph("Delincuentes Registrados\n\n", 
+                FontFactory.getFont("Arial", 18, Font.ITALIC, BaseColor.GRAY));
+        subtitle.setAlignment(Element.ALIGN_CENTER);
+        documento.add(subtitle);
         
-        mSession = Session.getDefaultInstance(mProperties);
-        
-        
-        try {
-            MimeMultipart mElementosCorreo = new MimeMultipart();
-            //Contenido del correo
-            MimeBodyPart mContenido = new MimeBodyPart();
-            mContenido.setContent(content, "text/html; charset=utf-8");
-            mElementosCorreo.addBodyPart(mContenido);
-            
-            //Agregar archivos adjuntos
-            MimeBodyPart mAdjuntos = null;
-            for(int i=0; i<mArchivosAdjuntos.length; i++){
-                mAdjuntos = new MimeBodyPart();
-                mAdjuntos.setDataHandler(new DataHandler(new FileDataSource(mArchivosAdjuntos[i].getAbsolutePath())));
-                mAdjuntos.setFileName(mArchivosAdjuntos[i].getName());
-                mElementosCorreo.addBodyPart(mAdjuntos);
-            }
-            
-            
-            mCorreo = new MimeMessage(mSession);
-            mCorreo.setFrom(new InternetAddress(emailFrom));
-            mCorreo.setRecipient(Message.RecipientType.TO, new InternetAddress(emailTo));
-            mCorreo.setSubject(subject);
-            mCorreo.setContent(mElementosCorreo);
-            //mCorreo.setText(content, "ISO-8859-1", "html");
-            
-        } catch (AddressException ex) {
-            Logger.getLogger(Registro_Criminal.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MessagingException ex) {
-            Logger.getLogger(Registro_Criminal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-    }
-    
-    private void sendEmail(){
-        try {
-            Transport mTransport = mSession.getTransport("smtp");
-            mTransport.connect(emailFrom, passwordFrom);
-            mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
-            mTransport.close();
-            JOptionPane.showMessageDialog(null, "CORREO ENVIADO");
-        } catch (NoSuchProviderException ex) {
-            Logger.getLogger(Registro_Criminal.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MessagingException ex) {
-            Logger.getLogger(Registro_Criminal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+        // Añadir un párrafo con detalles
+        Paragraph details = new Paragraph("Este reporte contiene información detallada sobre los delincuentes ingresados en el reclusorio.\n"
+                                        + " A continuación, se presentan los datos más relevantes recopilados hasta la fecha:\n\n",
+                FontFactory.getFont("Times New Roman", 14, Font.NORMAL, BaseColor.BLACK));
+        details.setAlignment(Element.ALIGN_JUSTIFIED);
+        documento.add(details);
 ```
 
-|Nombre | Descripcion|
-|-------|------------|
-|chooser.setMultiSelectionEnabled(true);| Permite seleccionar múltiples archivos al mismo tiempo|
-|chooser.setFileSelectionMode(JFileChooser.FILES_ONLY); | Configura el JFileChooser para que solo permita la selección de archivos, no de directorios|
+Creamos una tabla en nuestro documento PDF y se llena con los datos obtenidos de nuetsra base de datos. Tendremos una tabla de 7 columnas y se define las celdas de encabezado opara cada clumna de igual forma se le establece un estilo de fuente y color. Ahora vamos a obtener los datos que se encuentran en nuestra base de datos para llenar la tabla asi que tendremos que tener conectada nuestra base de datos ya una ves llenado se agrega al documento. 
 
- El código permite al usuario seleccionar múltiples archivos y luego muestra los nombres de esos archivos en una etiqueta. Usa JFileChooser para la selección de archivos y construye una cadena de texto en formato HTML para mostrar los nombres de los archivos en la etiqueta. 
-```swift
-JFileChooser chooser = new JFileChooser();
-        chooser.setMultiSelectionEnabled(true);
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        ```swift
+        PdfPTable tabla = new PdfPTable(7);
+        tabla.setWidthPercentage(100);
+        tabla.setSpacingBefore(10f);
+        tabla.setSpacingAfter(10f);
         
-        if(chooser.showOpenDialog(this) != JFileChooser.CANCEL_OPTION){
-            mArchivosAdjuntos = chooser.getSelectedFiles();
-            
-            for(File archivo : mArchivosAdjuntos){
-                nombres_archivos += archivo.getName() + "<br>";
-            }
-            
-            lblArchivos.setText("<html><p>" + nombres_archivos + "</p></html>");
+        PdfPCell[] celdas = new PdfPCell[] {
+            new PdfPCell(new Phrase("NUC", FontFactory.getFont("Arial", 12, Font.BOLD, BaseColor.WHITE))),
+            new PdfPCell(new Phrase("Nombre(s)", FontFactory.getFont("Arial", 12, Font.BOLD, BaseColor.WHITE))),
+            new PdfPCell(new Phrase("Apellidos", FontFactory.getFont("Arial", 12, Font.BOLD, BaseColor.WHITE))),
+            new PdfPCell(new Phrase("Edad", FontFactory.getFont("Arial", 12, Font.BOLD, BaseColor.WHITE))),
+            new PdfPCell(new Phrase("Delito", FontFactory.getFont("Arial", 12, Font.BOLD, BaseColor.WHITE))),
+            new PdfPCell(new Phrase("Lugar de nacimiento", FontFactory.getFont("Arial", 12, Font.BOLD, BaseColor.WHITE))),
+            new PdfPCell(new Phrase("Tipo de sangre", FontFactory.getFont("Arial", 12, Font.BOLD, BaseColor.WHITE)))
+        };
+        
+        for (PdfPCell celda : celdas) {
+            celda.setBackgroundColor(BaseColor.ORANGE);
+            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+            tabla.addCell(celda);
         }
+        
+        try {
+            Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/datosdelincuentes", "root", "");
+            PreparedStatement pst = (PreparedStatement) cn.prepareStatement("SELECT * FROM presos");
+            ResultSet rs = pst.executeQuery();
+            
+            while (rs.next()) {
+                tabla.addCell(rs.getString(1));
+                tabla.addCell(rs.getString(2));
+                tabla.addCell(rs.getString(3));
+                tabla.addCell(rs.getString(4));
+                tabla.addCell(rs.getString(5));
+                tabla.addCell(rs.getString(6));
+                tabla.addCell(rs.getString(7));
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR AL OBTENER DATOS DE LA BASE DE DATOS: " + e);
+        }
+        
+        documento.add(tabla);
+        
+        documento.close();
+        
+        String mensaje = "REPORTE CREADO EXITOSAMENTE";
+        JOptionPane.showMessageDialog(null, mensaje);
+        ```
 
-```
+        Tendremos una forma correcta de abrir nuestro archivo PDF generado. Tomando en cuneta si nuestra Desktop soporta la funcionalidad de escritorio. Ya una ves hecho nos crea un obejto File como un archivo PDF y si el PDF existe lo abre sin rpoblemas.  
+        
+        ```swift
+        if (Desktop.isDesktopSupported()) {
+            File pdfFile = new File("C:\\Users\\alexa\\OneDrive\\Escritorio\\REPORTES RECLUSORIO\\reporte.pdf");
+            if (pdfFile.exists()) {
+                Desktop.getDesktop().open(pdfFile);
+            }
+        }
+        
+    } catch (Exception e) {
+        System.out.println("ERROR EN PDF " + e);
+    }
+    }                     
+```         
+
 Se realizo una redaccion de una forma sencilla y entendible para el manejo de los datos. 
 Reclusorio fue hecho para poder tener un control con los datos dentro de el. Hay que tener almacenados los datos que se podran requerir en algun futuro, entonces fue importante saber como hacer la conexion con la base de datos. Este proyecto fue hecho con la finalidad de saber mejor el manejo de la interfaz entre otros temas que se fue aprendiendo en el camino.
 
 Hecho por:
 
 Torres Cortes Alexander Jassiel
-
 Cruz Alonso Kelly Adanari 
+ 
