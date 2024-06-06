@@ -302,7 +302,7 @@ Tedremos nuestra tabla de Imgenes, diciendole que tamano se requiere y en donde 
             documento.add(tablaImagenes);
 ```
     
-    
+ ```swift   
     void limpiar(){
         txtNuc.setText("");
         txtNombre.setText("");
@@ -329,12 +329,7 @@ Tedremos nuestra tabla de Imgenes, diciendole que tamano se requiere y en donde 
         txtRuta8.setText("");
     }
 ```
-| Nombre | Descripcion |
-|--------|-------------|
-| sendEmail() | envía un correo electrónico utilizando SMTP |
-|Transport mTransport = mSession.getTransport("smtp");|se utiliza para conectar y enviar el correo electrónico a través del protocolo SMTP|
-|mTransport.connect(emailFrom, passwordFrom);| autentica al remitente en el servidor SMTP para poder enviar el correo electrónico|
-|mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));| Se envía el mensaje de correo electrónico|
+
 
 
 Ingreso de datos donde se ira almacenando en la variable correspondiente y comparar que ningun campo de encuentre vacio. nos prepara la consulta para almacenarla. 
@@ -685,13 +680,200 @@ Creamos una tabla en nuestro documento PDF y se llena con los datos obtenidos de
         System.out.println("ERROR EN PDF " + e);
     }
     }                     
-```         
+      ```         
 
-Se realizo una redaccion de una forma sencilla y entendible para el manejo de los datos. 
+
+ ## Explicacion de librerias
+ 
+ - import com.mysql.jdbc.Connection;
+
+Esta clase se usa para establecer una conexión con una base de datos MySQL. Proporciona métodos para conectar, manejar y cerrar conexiones con la base de datos.
+- import com.mysql.jdbc.PreparedStatement;
+
+Esta clase permite crear declaraciones SQL precompiladas y parametrizadas. Es útil para ejecutar consultas de manera segura, evitando problemas como la inyección SQL.
+- import conexion.conexionmysql;
+
+Este parece ser un import personalizado que se refiere a una clase dentro de tu proyecto. Generalmente, esta clase se usa para manejar la conexión a la base de datos MySQL, encapsulando los detalles de conexión.
+- import java.awt.Graphics;
+
+Esta clase proporciona un conjunto de métodos para dibujar gráficos primitivos como líneas, rectángulos y figuras. Es esencial para cualquier operación de dibujo en componentes de AWT o Swing.
+- import java.awt.Image;
+
+La clase Image es una clase abstracta que representa imágenes gráficas. Puede ser usada para manejar imágenes en aplicaciones Java.
+- import javax.swing.JOptionPane;
+
+Esta clase proporciona métodos estáticos para mostrar cuadros de diálogo estándar como mensajes de información, advertencia, error, confirmación y entrada de datos.
+- import java.sql.ResultSet;
+
+Esta interfaz proporciona métodos para acceder y manipular los datos recuperados de una base de datos como resultado de una consulta SQL. Permite iterar sobre las filas de datos.
+- import javax.swing.ImageIcon;
+
+Esta clase encapsula una imagen y puede ser usada en componentes Swing, como etiquetas (JLabel) o botones (JButton), para mostrar imágenes.
+- import javax.swing.JPanel;
+
+Es un contenedor genérico que se puede usar para agrupar otros componentes de la interfaz de usuario y administrar su disposición.
+- import com.itextpdf.text.BaseColor;
+  
+Esta clase se usa para definir colores en los documentos PDF. Puedes especificar colores usando valores RGB.
+- import com.itextpdf.text.Chunk;
+
+Es la parte más pequeña de un texto en un documento PDF. Representa una cadena de texto con un formato específico.
+- import com.itextpdf.text.Document;
+
+Esta clase representa un documento PDF. Contiene métodos para añadir contenido, abrir y cerrar el documento.
+- import com.itextpdf.text.DocumentException;
+
+Esta excepción se lanza cuando ocurre un error al manipular un documento PDF.
+- import com.itextpdf.text.Font;
+
+Esta clase se usa para definir fuentes (tipo, tamaño, estilo) en los documentos PDF.
+- import com.itextpdf.text.FontFactory;
+
+Esta clase proporciona métodos para crear y manejar fuentes en los documentos PDF.
+- import com.itextpdf.text.pdf.PdfPTable;
+
+Esta clase se usa para crear tablas en un documento PDF.
+  - import java.io.File;
+ 
+Esta clase representa archivos y directorios en el sistema de archivos.
+- import java.io.FileInputStream;
+
+Esta clase permite leer bytes desde un archivo.
+- import java.io.FileOutputStream;
+
+ Esta clase permite escribir bytes a un archivo
+ - import java.util.Properties;
+
+Esta clase representa un conjunto de propiedades, que son pares clave-valor. Se usa comúnmente para manejar configuraciones.
+- import java.util.logging.Level;
+
+Esta clase define los niveles de registro para el Logger.
+ - import java.util.logging.Logger;
+
+Esta clase se usa para registrar mensajes en aplicaciones Java. Permite registrar mensajes con diferentes niveles de severidad.
+- import javax.activation.DataHandler;
+
+ Esta clase se usa para manejar datos enviados o recibidos en correos electrónicos, especialmente para archivos adjuntos.
+ - import javax.activation.FileDataSource;
+
+Esta clase se usa para encapsular archivos como fuentes de datos para correos electrónicos.
+- import javax.mail.BodyPart;
+
+Representa una parte del cuerpo de un mensaje de correo electrónico.
+- import javax.mail.Message;
+
+Esta clase representa un mensaje de correo electrónico.
+- import javax.mail.MessagingException;
+
+Se lanza cuando ocurre un error en el manejo de mensajes de correo electrónico.
+- import javax.mail.NoSuchProviderException;
+
+Se lanza cuando no se encuentra un proveedor de servicios de correo.
+- import javax.mail.Session;
+
+ Representa una sesión de correo electrónico. Se usa para configurar y obtener las propiedades y el autenticador.
+ - import javax.mail.Transport;
+
+Esta clase se usa para enviar mensajes de correo electrónico.
+- import javax.mail.internet.AddressException;
+
+Se lanza cuando se encuentra una dirección de correo electrónico con un formato incorrecto.
+- import javax.mail.internet.InternetAddress;
+
+Representa una dirección de correo electrónico.
+- import javax.mail.internet.MimeBodyPart;
+
+Representa una parte del cuerpo de un mensaje MIME.
+- import javax.mail.internet.MimeMessage;
+
+Esta clase representa un mensaje de correo electrónico en formato MIME.
+- import javax.mail.internet.MimeMultipart;
+
+Esta clase representa un mensaje que contiene varias partes en formato MIME.
+- import javax.swing.JFileChooser;
+
+Esta clase proporciona una ventana de diálogo estándar para seleccionar archivos o directorios.
+- import javax.swing.filechooser.FileNameExtensionFilter;
+
+Esta clase se usa para filtrar los archivos visibles en un JFileChooser basado en sus extensiones.
+- import java.awt.Desktop;
+
+Esta clase se usa para interactuar con el escritorio del sistema, como abrir archivos con la aplicación predeterminada.
+- import java.awt.Toolkit;
+
+Esta clase proporciona métodos para interactuar con las herramientas gráficas del sistema.
+- import java.sql.Connection;
+
+Esta interfaz se usa para establecer una conexión con la base de datos.
+- import java.sql.DriverManager;
+
+Esta clase se usa para gestionar un conjunto de controladores JDBC. Facilita la creación de conexiones a bases de datos.
+- import java.sql.ResultSet;
+
+Esta interfaz proporciona métodos para acceder y manipular los datos recuperados de una base de datos como resultado de una consulta SQL.
+- import Clase.Cliente2;
+
+Este parece ser un import personalizado que se refiere a una clase llamada Cliente2 dentro del paquete Clase. Generalmente, esta clase se usaría para representar la lógica o los datos de un cliente en tu aplicación.
+- import java.awt.Color;
+
+La clase Color se usa para encapsular colores en el espacio de color sRGB. Puede ser usada para establecer colores en gráficos, componentes de interfaz de usuario, y más.
+- import java.util.regex.*;
+
+Este import incluye todas las clases del paquete java.util.regex, que proporciona clases para trabajar con expresiones regulares en Java, como Pattern y Matcher.
+- import javax.swing.table.DefaultTableModel;
+
+Esta clase es una implementación de la interfaz TableModel que utiliza un Vector de Vector de Object para almacenar los datos del modelo de tabla. Facilita la creación y manipulación de tablas en JTable.
+- import org.jfree.chart.ChartFactory;
+
+Esta clase proporciona métodos estáticos para crear una variedad de gráficos (charts) como barras, líneas, pasteles, etc., usando la biblioteca JFreeChart.
+- import org.jfree.chart.ChartFrame;
+
+Esta clase se usa para mostrar un gráfico en una ventana de marco (frame). Facilita la visualización de gráficos generados por JFreeChart.
+- import org.jfree.chart.JFreeChart;
+
+Esta clase representa un gráfico completo en JFreeChart. Se utiliza para personalizar y renderizar el gráfico.
+- import org.jfree.chart.plot.PlotOrientation;
+
+Esta clase define las constantes utilizadas para especificar la orientación de un gráfico (vertical u horizontal).
+- import org.jfree.data.category.DefaultCategoryDataset;
+
+Esta clase se utiliza para crear y manipular conjuntos de datos categóricos, que son necesarios para generar gráficos de barras, líneas, etc., en JFreeChart.
+- import com.itextpdf.text.Element;
+
+ Esta clase define constantes y métodos para alinear y posicionar elementos en un documento PDF.
+ - import com.itextpdf.text.Phrase;
+
+Una Phrase es un grupo de Chunks y es el elemento más pequeño de texto que puede ser añadido a un ColumnText en iText. Sirve para contener múltiples fragmentos de texto.
+- import com.itextpdf.text.pdf.PdfPCell;
+
+Esta clase representa una celda en una tabla PDF (PdfPTable). Puedes usarla para controlar el contenido y el formato de cada celda en la tabla.
+- import Clase.Cliente;
+
+Este es un import personalizado que se refiere a una clase Cliente dentro del paquete Clase. Generalmente, esta clase se usaría para representar la lógica o los datos de un cliente en tu aplicación.
+- import conexion.conexionmysql2;
+
+Este es un import personalizado que se refiere a una clase dentro de tu proyecto que maneja la conexión a la base de datos MySQL, similar a conexionmysql.
+- import java.lang.System.Logger;
+
+Esta clase proporciona un sistema de registro de eventos de bajo nivel. Es utilizado para registrar mensajes con diferentes niveles de severidad.
+- import com.mysql.jdbc.Statement;
+
+ Esta clase permite ejecutar sentencias SQL sin parámetros en una base de datos MySQL. Se usa comúnmente para consultas y actualizaciones simples.
+ - import java.sql.SQLException;
+
+Esta excepción se lanza cuando ocurre un error al acceder a la base de datos.
+- import org.jfree.chart.plot.PlotOrientation;
+
+Esta clase define las constantes utilizadas para especificar la orientación de un gráfico (vertical u horizontal).
+- import java.sql.*;
+
+Este import incluye todas las clases e interfaces del paquete java.sql. Se usa para interactuar con bases de datos en Java y contiene clases e interfaces como Connection, Statement, ResultSet, y SQLException.
+
+
+  Se realizo una redaccion de una forma sencilla y entendible para el manejo de los datos. 
 Reclusorio fue hecho para poder tener un control con los datos dentro de el. Hay que tener almacenados los datos que se podran requerir en algun futuro, entonces fue importante saber como hacer la conexion con la base de datos. Este proyecto fue hecho con la finalidad de saber mejor el manejo de la interfaz entre otros temas que se fue aprendiendo en el camino.
-
 Hecho por:
-
 Torres Cortes Alexander Jassiel
 Cruz Alonso Kelly Adanari 
- 
+   
+
